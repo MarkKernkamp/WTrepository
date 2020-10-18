@@ -1,52 +1,228 @@
 <style>
   h1{
-    color:darkblue;
+    color: darkblue;
   }
 </style>
 
-<script>// galgje
-// 1 Functionele Doelstelling (opknippen -> ja)(concreet)(niet-technisch)
-// letter invoeren zien
-// 2 Technische Strategie (func doel)(wel-technisch)(tijd-precies)
-// invoerbox hebben invoeren button onclick || onkeyup veld
-// 3 Coderen (funct doel --> 1) OPRUIMEN
-// 
-  var hetWoord;
+<script>
+  var hetWoord = "";
+  var foutgeraden = 0;
+  var woord = "";
+  var correctarray = [];
+  var naamspeler1 = "";
+  var naamspeler2 = "";
+  var woorddictator = "speler 1"
+  var rader = "speler 2"
+  var gewonnenspeler1 = 0;
+  var gewonnenspeler2 = 0;
+
+  
+  function startscherm(){
+    naamspeler1 = document.getElementById("naamspeler1").value;
+    naamspeler2 = document.getElementById("naamspeler2").value;
+    console.log(naamspeler1 + "  " + naamspeler2 );
+    document.getElementById("voernamenin").hidden = true;
+    document.getElementById("naamspeler1").hidden = true;
+    document.getElementById("naamspeler2").hidden = true;
+    document.getElementById("naamknop").hidden = true;
+    document.getElementById("kieseenwoord").innerHTML = naamspeler1 + " kies een woord! <br>" + naamspeler2 + " mag niet meekijken...";
+    document.getElementById("kieseenwoord").hidden = false;
+    document.getElementById("invoerveld").hidden = false;
+    document.getElementById("startknop").hidden = false;
+  }
+  
   function beginnen(){
     document.getElementById("invoerveld").hidden = true;
     document.getElementById("startknop").hidden = true;
+    document.getElementById("kieseenwoord").hidden = true;
+    document.getElementById("fouteletters").hidden = false;
+    if(rader == "speler 1"){
+      document.getElementById("raadjeletter").innerHTML = naamspeler1 + " raad je letter!";
+    }
+    if(rader == "speler 2"){
+      document.getElementById("raadjeletter").innerHTML = naamspeler2 + " raad je letter!";
+    }
+    document.getElementById("raadjeletter").hidden = false;
+    document.getElementById("uitkomst").hidden = false;
+    document.getElementById("letterraden").hidden = false;
+    document.getElementById("fouteletters").innerHTML = "foute letters:";
+    document.getElementById("galg").innerHTML = "";
+    document.getElementById("galg").hidden = false;
     hetWoord = document.getElementById("invoerveld").value;
     maakWoord();
   }
+  
   function maakWoord(){
     var x = hetWoord.length;
-    var woord = "";
     for(var i = 0 ; i < x ; i++){
-      woord += "- ";
+      woord += "-";
     }
     document.getElementById("uitkomst").innerHTML = woord;
   }
+
   function raadletter(){
     var letterbox = document.getElementById("letterraden");
     var letter = letterbox.value;
     letterbox.value = "";
-    console.log("in radd letter"+letter);
+    console.log("Laatst geraden letter: "+letter);
+    var mis = 0;
+    for(i=0; i < hetWoord.length; i++){
+      if(hetWoord.charAt(i)==letter){
+        zetletteropbord(correcteletter = hetWoord.charAt(i));
+      }else{
+        mis++; 
+      }
+    }
+    if(mis == hetWoord.length){
+      document.getElementById("fouteletters").innerHTML += letter + " ";
+    }
+    checkgamestatus(missers = mis);
   }
-  function checkit(){
-    console.log(hetWoord);
+
+  function zetletteropbord(correcteletter){
+    console.log("correcte letter: " + correcteletter);
+    var nieuwwoord = "";
+    for(i=0; i < hetWoord.length; i++){
+      if(hetWoord.charAt(i)==correcteletter && correctarray.includes(i) == false){
+        correctarray.push(i);
+      }
+    }
+    for(i=0; i < hetWoord.length; i++){
+      if(correctarray.includes(i) && nieuwwoord.length == i){
+        nieuwwoord += hetWoord.charAt(i);
+      }else{
+        nieuwwoord += "-";
+      }
+    }
+    document.getElementById("uitkomst").innerHTML = nieuwwoord;
+    console.log(correctarray);
   }
+
+  function checkgamestatus(missers){
+    if(missers == hetWoord.length){
+      foutgeraden++;
+      console.log(foutgeraden + "x foutgeraden");
+      updateGalg(foutgeraden = foutgeraden);
+    }
+    if(foutgeraden>=9){
+      gameover(winner = woorddictator);
+    }
+    if(correctarray.length == hetWoord.length){
+      gameover(winner = rader)
+    }
+  }
+
+  function updateGalg(foutgeraden){
+    if(foutgeraden == 0 ){
+      document.getElementById("galg").innerHTML = "blank";
+    } 
+    if(foutgeraden == 1 ){
+      document.getElementById("galg").innerHTML = "<br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;|" 
+    } 
+    if(foutgeraden == 2 ){
+      document.getElementById("galg").innerHTML = "________<br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;|";
+    } 
+    if(foutgeraden == 3 ){
+      document.getElementById("galg").innerHTML = "________<br> |&nbsp;&ensp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;|";
+    } 
+    if(foutgeraden == 4 ){
+      document.getElementById("galg").innerHTML = "________<br> |&nbsp;&ensp;&emsp;&emsp;| <br> O&nbsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;| <br> &emsp;&emsp;&emsp;|";
+    } 
+    if(foutgeraden == 5 ){
+      document.getElementById("galg").innerHTML = "________<br> |&nbsp;&ensp;&emsp;&emsp;| <br> O&nbsp;&emsp;&emsp;| <br> &nbsp|&nbsp&nbsp&emsp;&emsp;| <br> &emsp;&emsp;&emsp;|";
+    } 
+    if(foutgeraden == 6 ){
+      document.getElementById("galg").innerHTML = "________<br> |&nbsp;&ensp;&emsp;&emsp;| <br> O&nbsp;&emsp;&emsp;| <br> /|&nbsp&nbsp&emsp;&emsp;| <br> &emsp;&emsp;&emsp;|";
+    } 
+    if(foutgeraden == 7 ){
+      document.getElementById("galg").innerHTML = "________<br> |&nbsp;&ensp;&emsp;&emsp;| <br> O&nbsp;&emsp;&emsp;| <br> /|\\ &emsp;&emsp;| <br> &emsp;&emsp;&emsp;|";
+    }
+    if(foutgeraden == 8 ){
+      document.getElementById("galg").innerHTML = "________<br> |&nbsp;&ensp;&emsp;&emsp;| <br> O&nbsp;&emsp;&emsp;| <br> /|\\ &emsp;&emsp;| <br> /&nbsp&nbsp&nbsp&emsp;&emsp;|";
+    }
+    if(foutgeraden >= 9 ){
+      document.getElementById("galg").innerHTML = "________<br> |&nbsp;&ensp;&emsp;&emsp;| <br> O&nbsp;&emsp;&emsp;| <br> /|\\ &emsp;&emsp;| <br> /&nbsp\\&nbsp&emsp;&emsp;|";
+    } 
+  }
+
+ function gameover(winner){
+  updateScoreboard(winner);
+  document.getElementById("winnaar").hidden = false;
+  if(winner == "speler 1"){
+    document.getElementById("winnaar").innerHTML = "De winnaar is " + naamspeler1 +"!";
+  }
+  if(winner == "speler 2"){
+    document.getElementById("winnaar").innerHTML = "De winnaar is " + naamspeler2 +"!";
+  }
+  document.getElementById("letterraden").hidden = true;
+  document.getElementById("raadjeletter").hidden = true;
+  document.getElementById("opnieuwbeginnen").hidden = false;
+ }
+
+ function reset(){
+  hetWoord = "";
+  foutgeraden = 0;
+  woord = "";
+  correctarray = [];
+  if(woorddictator == "speler 1"){
+    document.getElementById("kieseenwoord").innerHTML = naamspeler2 + " kies een woord! <br>" + naamspeler1 + " mag niet meekijken...";
+  }
+  if(woorddictator == "speler 2"){
+    document.getElementById("kieseenwoord").innerHTML = naamspeler1 + " kies een woord! <br>" + naamspeler2 + " mag niet meekijken...";
+  }
+  
+
+  document.getElementById("kieseenwoord").hidden = false;
+  document.getElementById("winnaar").hidden = true;
+  document.getElementById("invoerveld").value = "";
+  document.getElementById("invoerveld").hidden = false;
+  document.getElementById("startknop").hidden = false;
+  document.getElementById("uitkomst").hidden = true;
+  document.getElementById("galg").hidden = true;
+  document.getElementById("fouteletters").hidden = true;
+  document.getElementById("opnieuwbeginnen").hidden = true;
+  var nieuwerader = woorddictator;
+  var nieuwewoorddictator = rader;
+  rader = nieuwerader;
+  woorddictator = nieuwewoorddictator;
+ }
+
+function updateScoreboard(winner){
+  document.getElementById("scorebord").hidden = false;
+  if(winner == "speler 1"){
+    gewonnenspeler1++;
+  }
+  if(winner == "speler 2"){
+    gewonnenspeler2++;
+  }
+  document.getElementById("scorebord").innerHTML = "Aantal keer gewonnen: <br>" + naamspeler1 + "  " + gewonnenspeler1 + "x <br> " + naamspeler2 + "  " + gewonnenspeler2 + "x";
+}
 
 </script>
 
+
 <h1>Galgje</h1>
 
-<span>Speler 1 kies een woord</span>
-<input type="text" id="invoerveld" >
-<input type="button" id="startknop" value="beginnen" onclick="beginnen()">
-<div><h1 id=uitkomst></h1></div>
-<input type="text" id="letterraden" onkeyup=raadletter()>
+<span id="voernamenin">Voer jullie namen in!</span><br>
+<input type="text" id="naamspeler1" ><br>
+<input type="text" id="naamspeler2" ><br>
+<input type="button" id="naamknop" value="Doorgaan" onclick=startscherm()>
 
+<span id="kieseenwoord" hidden></span><br>
+<span id="winnaar" hidden></span>
+<input type="text" id="invoerveld" hidden >
+<input type="button" id="startknop" value="beginnen" onclick=beginnen() hidden>
 
+<div><h1 id=uitkomst ></h1></div>
+  <span id=raadjeletter hidden></span><br>
+  <input type="text" id="letterraden" onkeyup=raadletter() hidden>
 
-<br><br><br>
-<input type="button" id="nieuwknop" value="hetwoord" onclick="checkit()">
+<br>
+  <span id=galg></span>
+<br><br>
+  <span id=fouteletters hidden>foute letters: <br></span>
+<br><br>
+  <input type="button" id=opnieuwbeginnen value="Rematch!" onclick=reset() hidden>
+<br><br>
+  <span id=scorebord hidden></span>
+
